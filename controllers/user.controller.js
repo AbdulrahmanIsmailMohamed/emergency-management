@@ -74,7 +74,8 @@ export const signup = asyncFunction(async (req, res) => {
 });
 
 export const profile = (req, res) => {
-  res.render("user/profile");
+  // res.render("user/profile");
+  res.render("emergency/emergency");
 };
 
 export const uploadAvatar = asyncFunction(async (req, res) => {

@@ -7,7 +7,6 @@ export const db = () => {
       console.log("Successful connection");
     })
     .catch((err) => {
-      console.error("MongoDB connection error:", err);
       throw err; // Throw the error for the calling code to handle
     });
 };
