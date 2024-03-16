@@ -1,14 +1,15 @@
 import multer, { diskStorage } from "multer";
 
-// configure multer
-let storage = diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/images");
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.fieldname + "-" + Date.now() + ".png");
+const storage = multer.diskStorage({
+  filename(req, file, callback) {
+    callback(null, file.originalname);
   },
 });
 
-let upload = multer({ storage });
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith("image")) cb(null, true);
+  else cb(new APIError("Add Only image", 400), null);
+};
+
+let upload = multer({ fileFilter, storage });
 export default upload;
