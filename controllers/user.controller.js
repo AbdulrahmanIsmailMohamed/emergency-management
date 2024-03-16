@@ -35,13 +35,18 @@ export const uploadAvatar = asyncHandler(async (req, res) => {
     console.log(result);
     if (!result) return res.status(500).json("Internal Server Error!");
 
-    const update = await User.findByIdAndUpdate(req.user._id, {
-      avatar: result.url,
-    });
-    console.log(result);
+    const update = await User.findByIdAndUpdate(
+      req.user._id,
+      {
+        avatar: result.url,
+      },
+      { new: true }
+    );
+    console.log(result + update);
     if (!update) return res.status(404).json("This user not exist");
     res.redirect("/user/profile");
   } catch (error) {
+    console.error(error);
     res.status(500).json("Internal Server Error!");
   }
 });
