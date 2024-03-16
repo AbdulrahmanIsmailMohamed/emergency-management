@@ -16,7 +16,7 @@
       <%- include('../partials/flashMessages') %>
       <h3><% if (user) { %> Welcome <%= user.name %>... :) <% } %></h3>
       <form
-        action="/user/upload-avatar"
+        action="/user/upload-avatar/<%=user._id%>"
         method="POST"
         enctype="multipart/form-data"
       >

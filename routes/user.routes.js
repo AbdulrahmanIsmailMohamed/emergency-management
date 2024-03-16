@@ -29,8 +29,8 @@ router.get("/get-location", getLocation);
 
 router.get("/basemap", basemap);
 
-router.post("/upload-avatar", upload.single("avatar"), uploadAvatar);
-
 router.get("/logout", logout);
+
+router.post("/upload-avatar/:id", upload.single("avatar"), uploadAvatar);
 
 export default router;

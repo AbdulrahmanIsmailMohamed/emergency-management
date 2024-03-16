@@ -26,7 +26,7 @@ export const getLocation = (req, res) => {
 
 export const uploadAvatar = asyncHandler(async (req, res) => {
   try {
-    console.log(req);
+    console.log(req.params.id);
     const imagePath = req.file.path;
     const result = await cloudinary.uploader.upload(imagePath, {
       folder: "emergency/profiles",
@@ -37,7 +37,7 @@ export const uploadAvatar = asyncHandler(async (req, res) => {
     if (!result) return res.status(500).json("Internal Server Error!");
 
     const update = await User.findByIdAndUpdate(
-      req.user._id,
+      req.params.id,
       {
         avatar: result.url,
       },
