@@ -57,7 +57,7 @@ app.use(express.static("public"));
 app.use(express.static("node_modules"));
 
 app.get("/", (req, res) => {
-  res.redirect("/user/login");
+  res.redirect("/user/basemap");
 });
 
 // Routes

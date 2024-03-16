@@ -2,10 +2,10 @@
 <div class="container">
   <div class="row mt-4">
     <div class="col-md-9 offset-md-3">
-      <h1 class="display-4">Signup</h1>
+      <h1 class="display-4">Register</h1>
       <hr />
       <%- include('../partials/flashMessages') %>
-      <form action="/user/signup" method="post">
+      <form action="/user/register" method="post">
         <div class="form-group">
           <label for="name">Name</label>
           <input type="text" name="name" id="name" class="form-control" />
@@ -13,6 +13,10 @@
         <div class="form-group">
           <label for="email">Email</label>
           <input type="text" name="email" id="email" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label for="nationalID">National ID</label>
+          <input type="text" name="nationalID" id="nationalID" class="form-control" />
         </div>
         <div class="form-group">
           <label for="Password">password</label>
@@ -34,7 +38,7 @@
         </div>
         <br />
         <div class="form-group">
-          <button type="submit" class="btn btn-primary">Signup</button>
+          <button type="submit" class="btn btn-primary">Register</button>
         </div>
       </form>
       <hr />

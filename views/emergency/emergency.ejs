@@ -4,6 +4,7 @@
   <!-- the map will go inside this div below -->
   <div id="map"></div>
 </div>
+
 <script>
   console.log("hi");
   const geoserverUrl = "http://localhost:8080/geoserver";
@@ -31,67 +32,54 @@
   ).addTo(map);
 
   // display zag points
-
-  fetch("../data/zag.json")
-    .then((response) => response.json())
-    .then((data) => {
-      // Now you can use the 'data' object containing your JSON
+  const fetchJSON = async (url) => {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
       initItems(data);
-    })
-    .catch((error) => {
+    } catch (error) {
       console.error("Error fetching JSON:", error);
-    });
+    }
+  };
 
   const initItems = (zag) => {
-    const customIconHospital = L.icon({
-      iconUrl: "/hospital-location-pin.png",
+    const iconMappings = {
+      hospital: L.icon({
+        iconUrl: "/hospital-location-pin.png",
+        iconSize: [38, 40],
+        iconAnchor: [22, 94],
+        popupAnchor: [-3, -76],
+      }),
+      police: L.icon({
+        iconUrl: "/police.png",
+        iconSize: [38, 35],
+        iconAnchor: [22, 94],
+        popupAnchor: [-3, -76],
+      }),
+      ambulance: L.icon({
+        iconUrl: "/ambulance.png",
+        iconSize: [38, 35],
+        iconAnchor: [22, 94],
+        popupAnchor: [-3, -76],
+      }),
+      fire: L.icon({
+        iconUrl: "/fire-station.png",
+        iconSize: [40, 35],
+        iconAnchor: [22, 94],
+        popupAnchor: [-3, -76],
+      }),
+    };
 
-      iconSize: [38, 40], // size of the icon
-      iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
-      popupAnchor: [-3, -76], // point from which the popup should open relative to the iconAnchor
-    });
+    zag.features.forEach((item) => {
+      const icon =
+        iconMappings[item.properties.type.toLowerCase()] || iconMappings.fire;
 
-    const customIconPolice = L.icon({
-      iconUrl: "/police.png",
-
-      iconSize: [38, 35], // size of the icon
-      iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
-      popupAnchor: [-3, -76], // point from which the popup should open relative to the iconAnchor
-    });
-
-    const customIconAmbulance = L.icon({
-      iconUrl: "/ambulance.png",
-      iconSize: [38, 35], // size of the icon
-      iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
-      popupAnchor: [-3, -76], // point from which the popup should open relative to the iconAnchor
-    });
-
-    const customIconFire = L.icon({
-      iconUrl: "/fire-station.png",
-
-      iconSize: [40, 35], // size of the icon
-      iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
-      popupAnchor: [-3, -76], // point from which the popup should open relative to the iconAnchor
-    });
-
-    let icon;
-
-    zag.features.map((item) => {
-      if (item.properties.type === "hospital") {
-        icon = customIconHospital;
-      } else if (item.properties.type === "police") {
-        icon = customIconPolice;
-      } else if (item.properties.type === "Ambulance") {
-        icon = customIconAmbulance;
-      } else {
-        icon = customIconFire;
-      }
-
-      return L.marker(
+      const marker = L.marker(
         [item.geometry.coordinates[1], item.geometry.coordinates[0]],
-        {
-          icon,
-        }
+        { icon }
       )
         .bindPopup(
           createPopupContent(
@@ -106,6 +94,8 @@
         .addTo(map);
     });
   };
+
+  fetchJSON("../data/zag.json");
 
   const sourceMarker = L.marker([30.5904, 31.50673], { draggable: true })
     .on("dragend", (e) => {
@@ -208,6 +198,52 @@
   pathLayer.on("click", function (event) {
     event.layer.openPopup();
   });
+
+  // Create a custom control element to get my location
+  var customControl = L.Control.extend({
+    options: {
+      position: "topleft",
+    },
+
+    onAdd: (map) => {
+      // Create a button element
+      let button = L.DomUtil.create(
+        "button",
+        "leaflet-bar leaflet-control leaflet-control-custom"
+      );
+      button.innerHTML = "Get My Location";
+      button.style.backgroundColor = "gray";
+      button.style.color = "white";
+      button.style.padding = "10px";
+      button.style.borderRadius = "10px";
+
+      // Handle button click event
+      button.onclick = () => {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            function (position) {
+              const userLocation = [
+                position.coords.latitude,
+                position.coords.longitude,
+              ];
+              map.flyTo(userLocation, 18); // Smoothly pan and zoom to the user's location
+              L.marker(userLocation).addTo(map); // Add marker at user's location
+            },
+            (error) => {
+              console.error("Error getting user location:", error);
+            }
+          );
+        } else {
+          alert("Geolocation is not supported by your browser.");
+        }
+      };
+
+      return button; // Add the button element to the map
+    },
+  });
+
+  // Add the custom control to the map
+  map.addControl(new customControl());
 
   getVertex(sourceMarker.getLatLng());
   getVertex(targetMarker.getLatLng());

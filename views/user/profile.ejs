@@ -16,7 +16,7 @@
       <%- include('../partials/flashMessages') %>
       <h3><% if (user) { %> Welcome <%= user.name %>... :) <% } %></h3>
       <form
-        action="/user/uploadAvatar"
+        action="/user/upload-avatar"
         method="POST"
         enctype="multipart/form-data"
       >
@@ -29,6 +29,7 @@
         />
         <button type="submit" class="btn btn-primary">Upload</button>
       </form>
+
       <hr />
       <h1 class="display-4">Image Preivew</h1>
       <img

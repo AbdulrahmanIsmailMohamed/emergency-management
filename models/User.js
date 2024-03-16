@@ -1,36 +1,33 @@
-import validate from "validator";
 import { Schema, model } from "mongoose";
 
-const userSchema = Schema({
-  name: {
-    type: String,
-    required: true,
-    minLength: [5, "title can't be less 3 character"],
-    maxLength: [15, "title can't be more than 15 character"],
-  },
-  email: {
-    type: String,
-    required: true,
-    // unique: true,
-    validate: {
-      validator: (val) => validate.isEmail(val),
-      message: `{VALUE} isn't valid email`,
+const userSchema = Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      minLength: 5,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: true,
+      minLength: 5,
+    },
+    avatar: {
+      type: String,
+      required: true,
+    },
+    nationalID: {
+      type: String,
+      required: true,
     },
   },
-  password: {
-    type: String,
-    required: true,
-    minLength: 5,
-    validate: {
-      validator: (val) => validate.isStrongPassword(val),
-      message: `{PASSWORD} isn't strong password`,
-    },
-  },
-  avatar: {
-    type: String,
-    required: true,
-  },
-});
+  { timestamp: true }
+);
 
 const User = model("User", userSchema);
 export default User;

@@ -1,6 +1,6 @@
 <nav class="navbar navbar-dark navbar-expand-sm bg-dark">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">Emergency Management</a>
+    <a class="navbar-brand" href="/user/basemap">Emergency Management</a>
     <button
       class="navbar-toggler"
       type="button"
@@ -19,12 +19,9 @@
           <a
             class="nav-link active"
             aria-current="page"
-            href="/events/allevents"
+            href="/user/basemap"
             >Home</a
           >
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/events/create/">Add News</a>
         </li>
         <% } %>
       </ul>
@@ -32,10 +29,10 @@
       <ul class="navbar-nav ms-auto">
         <% if (!user) { %>
         <li class="nav-item">
-          <a class="nav-link" href="/user/login">Signin</a>
+          <a class="nav-link" href="/user/login">Login</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/user/signup">Signup</a>
+          <a class="nav-link" href="/user/register">Register</a>
         </li>
         <% } else { %>
         <li class="nav-item">
