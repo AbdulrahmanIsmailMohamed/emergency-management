@@ -3,14 +3,15 @@ import { urlencoded, json } from "express";
 import session from "express-session";
 import passport from "passport";
 import flash from "connect-flash";
+import MongoDBStore from "connect-mongodb-session";
 import { config } from "dotenv";
 
 import { db } from "../db/connect.js";
 import errorHandling from "../middlewares/errorHandlingMW.js";
 import userRoutes from "../routes/user.routes.js";
 
-// Initialize express app
 const app = express();
+
 config(); // Load environment variables
 db(); // Connect to the database
 
@@ -23,12 +24,24 @@ app.use(urlencoded({ extended: false }));
 app.use(json());
 
 // Configure express-session
+const MongoDBStoreInstance = MongoDBStore(session);
+const store = new MongoDBStoreInstance({
+  uri: process.env.MONGO_URL,
+  collection: "mySessions",
+});
+
 app.use(
   session({
     secret: process.env.SECRET_SESSION,
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 60000 * 15 },
+    store,
+    cookie: {
+      maxAge: 60000 * 15, // Maximum age of the session cookie (in milliseconds)
+      secure: true, // Ensures that the cookie is only sent over HTTPS
+      httpOnly: true, // Prevents client-side JavaScript from accessing the cookie
+      sameSite: "strict", // Restricts the cookie to be sent only to the same site as the request
+    },
   })
 );
 
