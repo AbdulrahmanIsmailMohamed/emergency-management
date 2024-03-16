@@ -29,7 +29,12 @@ router.get("/get-location", getLocation);
 
 router.get("/basemap", basemap);
 
-router.post("/upload-avatar", upload.single("avatar"), uploadAvatar);
+router.post(
+  "/upload-avatar",
+  ensureAuthenticated,
+  upload.single("avatar"),
+  uploadAvatar
+);
 
 router.get("/logout", logout);
 
