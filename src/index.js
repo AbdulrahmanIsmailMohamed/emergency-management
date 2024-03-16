@@ -38,7 +38,7 @@ app.use(
     store,
     cookie: {
       maxAge: 60000 * 15, // Maximum age of the session cookie (in milliseconds)
-      secure: true, // Ensures that the cookie is only sent over HTTPS
+      // secure: true, // Ensures that the cookie is only sent over HTTPS
     },
   })
 );
