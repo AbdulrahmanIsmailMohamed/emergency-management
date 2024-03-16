@@ -52,7 +52,6 @@ app.use((req, res, nxt) => {
 app.set("view engine", "ejs");
 
 // Serve static files
-app.use(express.static("uploads"));
 app.use(express.static("public"));
 app.use(express.static("node_modules"));
 

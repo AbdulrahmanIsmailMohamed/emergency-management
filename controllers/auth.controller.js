@@ -3,6 +3,7 @@ import passport from "passport";
 import bcrypt from "bcrypt";
 
 import asyncHandler from "../middlewares/async.js";
+import User from "../models/User.js";
 
 export const login = async (req, res, next) => {
   try {
