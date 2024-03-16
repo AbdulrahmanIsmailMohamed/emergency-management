@@ -26,7 +26,7 @@ export const getLocation = (req, res) => {
 
 export const uploadAvatar = asyncHandler(async (req, res) => {
   try {
-    console.log(req.user);
+    console.log(req);
     const imagePath = req.file.path;
     const result = await cloudinary.uploader.upload(imagePath, {
       folder: "emergency/profiles",
