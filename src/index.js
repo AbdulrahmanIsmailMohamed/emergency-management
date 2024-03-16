@@ -39,8 +39,6 @@ app.use(
     cookie: {
       maxAge: 60000 * 15, // Maximum age of the session cookie (in milliseconds)
       secure: true, // Ensures that the cookie is only sent over HTTPS
-      httpOnly: true, // Prevents client-side JavaScript from accessing the cookie
-      sameSite: "strict", // Restricts the cookie to be sent only to the same site as the request
     },
   })
 );
