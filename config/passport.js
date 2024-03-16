@@ -1,5 +1,5 @@
 import { Strategy as LocalStrategy } from "passport-local";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 import User from "../models/User.js";
 import passport from "passport";
 
@@ -12,10 +12,7 @@ export const passportInit = () => {
       },
       async (req, email, password, done) => {
         try {
-          // Find user by email
           const user = await User.findOne({ email });
-
-          // If user not found, return error message
           if (!user) {
             return done(
               null,
@@ -24,13 +21,9 @@ export const passportInit = () => {
             );
           }
 
-          // Compare passwords
-          const isMatch = await bcrypt.compare(password, user.password);
-          if (isMatch) {
-            // If passwords match, return user
+          if (bcrypt.compareSync(password, user.password)) {
             return done(null, user);
           } else {
-            // If passwords don't match, return error message
             return done(
               null,
               false,
@@ -38,8 +31,6 @@ export const passportInit = () => {
             );
           }
         } catch (error) {
-          // Handle any unexpected errors
-          console.error(error);
           return done(error);
         }
       }

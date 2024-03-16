@@ -15,11 +15,13 @@ const userSchema = Schema(
     password: {
       type: String,
       required: true,
-      minLength: 5,
+      minLength: 8,
     },
     avatar: {
       type: String,
       required: true,
+      default:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRiFdEPVQn9Hf_UkVTOco2_3_jHpfiR_jVYbA&usqp=CAU",
     },
     nationalID: {
       type: String,

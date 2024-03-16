@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 export const db = () => {
   mongoose
+    .set("strictQuery", false)
     .connect(process.env.MONGO_URL)
     .then(() => {
       console.log("Successful connection");

@@ -1,23 +1,23 @@
 import { Router } from "express";
-const router = Router();
+
 import upload from "../middlewares/multer.js";
 import { ensureAuthenticated } from "../config/auth.js";
-
 import {
   loginValidator,
   registerValidator,
 } from "../utils/validators/user.validator.js";
 import {
   loginView,
-  login,
   profile,
   logout,
   uploadAvatar,
   getLocation,
   basemap,
-  register,
   registerView,
 } from "../controllers/user.controller.js";
+import { login, register } from "../controllers/auth.controller.js";
+
+const router = Router();
 
 router.route("/login").get(loginView).post(loginValidator, login);
 

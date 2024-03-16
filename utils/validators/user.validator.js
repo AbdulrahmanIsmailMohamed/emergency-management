@@ -4,14 +4,16 @@ export const registerValidator = [
   check("name")
     .notEmpty()
     .isLength({ min: 5 })
-    .withMessage("Name should be more than 5 char"),
+    .withMessage("Your name should be more than 5 char"),
 
   check("email").notEmpty().isEmail().withMessage("Email Isn't valid"),
 
   check("password")
     .notEmpty()
-    .isLength({ min: 5 })
-    .withMessage("Password isn't strong"),
+    .isStrongPassword()
+    .withMessage(
+      "Your password must be have at least 8 characters long 1 uppercase & 1 lowercase & 1 special char(@$%#&) character 1 number"
+    ),
   check("nationalID")
     .notEmpty()
     .isLength({ min: 14, max: 14 })
@@ -19,10 +21,7 @@ export const registerValidator = [
 ];
 
 export const loginValidator = [
-  check("email").notEmpty().isEmail().withMessage("Email Isn't valid"),
+  check("email").notEmpty().withMessage("Email required"),
 
-  check("password")
-    .notEmpty()
-    .isLength({ min: 5 })
-    .withMessage("Password isn't strong")
+  check("password").notEmpty().withMessage("Password required"),
 ];
