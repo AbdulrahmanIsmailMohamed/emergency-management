@@ -26,14 +26,12 @@ export const getLocation = (req, res) => {
 
 export const uploadAvatar = asyncHandler(async (req, res) => {
   try {
-    console.log(req.params.id);
     const imagePath = req.file.path;
     const result = await cloudinary.uploader.upload(imagePath, {
       folder: "emergency/profiles",
       format: "jpg",
       public_id: `${Date.now()}-profile`,
     });
-    console.log(result);
     if (!result) return res.status(500).json("Internal Server Error!");
 
     const update = await User.findByIdAndUpdate(
@@ -43,9 +41,8 @@ export const uploadAvatar = asyncHandler(async (req, res) => {
       },
       { new: true }
     );
-    console.log(result + update);
     if (!update) return res.status(404).json("This user not exist");
-    res.redirect("/user/profile");
+    res.render("user/profile");
   } catch (error) {
     console.error(error);
     res.status(500).json("Internal Server Error!");
