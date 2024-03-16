@@ -42,7 +42,7 @@ export const uploadAvatar = asyncHandler(async (req, res) => {
       { new: true }
     );
     if (!update) return res.status(404).json("This user not exist");
-    res.render("user/profile");
+    res.redirect("/user/profile");
   } catch (error) {
     console.error(error);
     res.status(500).json("Internal Server Error!");
