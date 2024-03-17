@@ -27,6 +27,9 @@ const userSchema = Schema(
       type: String,
       required: true,
     },
+    longLat: {
+      type: [String],
+    },
   },
   { timestamp: true }
 );

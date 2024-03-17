@@ -9,11 +9,12 @@ import {
 import {
   loginView,
   profile,
+  emergencyCall,
   logout,
   uploadAvatar,
-  getLocation,
   basemap,
   registerView,
+  emergencyCallView,
 } from "../controllers/user.controller.js";
 import { login, register } from "../controllers/auth.controller.js";
 
@@ -25,7 +26,10 @@ router.route("/register").get(registerView).post(registerValidator, register);
 
 router.get("/profile", ensureAuthenticated, profile);
 
-router.get("/get-location", getLocation);
+router
+  .route("/emergency-call")
+  .get(ensureAuthenticated, emergencyCallView)
+  .post(ensureAuthenticated, emergencyCall);
 
 router.get("/basemap", basemap);
 

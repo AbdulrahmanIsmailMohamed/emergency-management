@@ -12,16 +12,29 @@ export const registerView = (req, res) => {
   });
 };
 
+export const emergencyCall = asyncHandler(async (req, res) => {
+  const { lat, long } = req.body;
+
+  const user = await User.findByIdAndUpdate(
+    req.user.id,
+    {
+      longLat: [long, lat],
+    },
+    { new: true }
+  );
+  res.json(user)
+});
+
+export const emergencyCallView = (req, res) => {
+  res.render("emergency/emergencyCall");
+};
+
 export const profile = (req, res) => {
   res.render("user/profile");
 };
 
 export const basemap = (req, res) => {
   res.render("emergency/emergency");
-};
-
-export const getLocation = (req, res) => {
-  res.render("emergency/getLocation");
 };
 
 export const uploadAvatar = asyncHandler(async (req, res) => {
@@ -34,13 +47,9 @@ export const uploadAvatar = asyncHandler(async (req, res) => {
     });
     if (!result) return res.status(500).json("Internal Server Error!");
 
-    const update = await User.findByIdAndUpdate(
-      req.params.id,
-      {
-        avatar: result.url,
-      },
-      { new: true }
-    );
+    const update = await User.findByIdAndUpdate(req.params.id, {
+      avatar: result.url,
+    });
     if (!update) return res.status(404).json("This user not exist");
     res.redirect("/user/profile");
   } catch (error) {

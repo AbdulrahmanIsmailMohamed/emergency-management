@@ -1,0 +1,103 @@
+<%- include('../partials/header') -%> <%- include('../partials/navbar') -%>
+
+<div
+  class="container d-flex justify-content-center align-items-center"
+  style="height: 100vh"
+>
+  <div class="text-center">
+    <h2 class="my-4">بماذا تريد ان تتصل؟</h2>
+    <button
+      type="button"
+      class="btn btn-primary mb-3"
+      onclick="handleButtonClick('المستشفي')"
+    >
+      Hospital Emergency</button
+    ><br />
+    <button
+      type="button"
+      class="btn btn-primary mb-3"
+      onclick="handleButtonClick('الاسعاف')"
+    >
+      Ambulance Emergency</button
+    ><br />
+    <button
+      type="button"
+      class="btn btn-primary mb-3"
+      onclick="handleButtonClick('المطافي')"
+    >
+      Fire Emergency</button
+    ><br />
+    <button
+      type="button"
+      class="btn btn-primary mb-3"
+      onclick="handleButtonClick('قسم الشرطة')"
+    >
+      Police Emergency</button
+    ><br />
+  </div>
+  <div id="userModal" class="modal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">User Data</h5>
+          <button
+            type="button"
+            class="btn btn-close"
+            data-dismiss="modal"
+            aria-label="Close"
+            onclick="closeModal()"
+          ></button>
+        </div>
+        <div class="modal-body" id="userData"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  function handleButtonClick(emergency) {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const long = position.coords.longitude;
+
+          // Send the coordinates to the server
+          fetch("/user/emergency-call", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ lat, long }),
+          })
+            .then((response) => response.json())
+            .then((user) => {
+              // Update modal content with user data
+              document.getElementById("userData").innerHTML = `
+                <p>لقد تم تحديد موقعك و ارسال بياناتك الي ${emergency} التي طلبتها وسوف يصلون اليك حالا</p>
+                <p><img src="${user.avatar}" alt="User Image" class="avatar" style="max-width: 100px;"></p>
+                <p><bold>Name</bold>: ${user.name}</p>
+                <p>Email: ${user.email}</p>
+                <p>National ID: ${user.nationalID}</p>
+                <p>Long And Lat: [${user.longLat[0]}, ${user.longLat[1]}]</p>      
+              `;
+              // Show the modal
+              $("#userModal").modal("show");
+            })
+            .catch((error) => console.error("Error:", error));
+        },
+        (error) => {
+          console.error("Error getting user location:", error);
+        }
+      );
+    } else {
+      alert("Geolocation is not supported by your browser.");
+    }
+  }
+
+  // close model
+  function closeModal() {
+    $("#userModal").modal("hide");
+  }
+</script>
+
+<%- include('../partials/footer') -%>
