@@ -22,7 +22,7 @@ export const emergencyCall = asyncHandler(async (req, res) => {
     },
     { new: true }
   );
-  res.json(user)
+  res.json(user);
 });
 
 export const emergencyCallView = (req, res) => {
@@ -46,7 +46,6 @@ export const uploadAvatar = asyncHandler(async (req, res) => {
       public_id: `${Date.now()}-profile`,
     });
     if (!result) return res.status(500).json("Internal Server Error!");
-
     const update = await User.findByIdAndUpdate(req.params.id, {
       avatar: result.url,
     });

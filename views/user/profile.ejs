@@ -14,7 +14,7 @@
       <h1 class="display-4">Profile</h1>
       <hr />
       <%- include('../partials/flashMessages') %>
-      <h3><% if (user) { %> Welcome <%= user.name %>... :) <% } %></h3>
+      <h3><% if (user) { %> Welcome <%= user.name %>... <% } %></h3>
       <form
         action="/user/upload-avatar/<%=user._id%>"
         method="POST"
@@ -24,10 +24,12 @@
           type="file"
           name="avatar"
           id="avatar"
-          onchange="readURL(this)"
+          onchange="readURL(this); toggleUploadButton();"
           style="cursor: pointer"
         />
-        <button type="submit" class="btn btn-primary">Upload</button>
+        <button type="submit" id="uploadButton" class="btn btn-primary">
+          Upload
+        </button>
       </form>
 
       <hr />
@@ -51,4 +53,16 @@
     </div>
   </div>
 </div>
+
+<script>
+  let uploadButton = document.getElementById("uploadButton");
+  uploadButton.style.display = "none";
+  function toggleUploadButton() {
+    var fileInput = document.getElementById("avatar");
+    var uploadButton = document.getElementById("uploadButton");
+    if (fileInput.files.length > 0) {
+      uploadButton.style.display = "block";
+    }
+  }
+</script>
 <%- include('../partials/footer') -%>
