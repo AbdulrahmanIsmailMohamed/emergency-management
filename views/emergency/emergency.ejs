@@ -3,6 +3,7 @@
 <div id="container">
   <!-- the map will go inside this div below -->
   <div id="map"></div>
+  <div id="message"></div>
 </div>
 
 <script>
@@ -96,22 +97,6 @@
 
   fetchJSON("../data/zag.json");
 
-  const sourceMarker = L.marker([30.5904, 31.50673], { draggable: true })
-    .on("dragend", (e) => {
-      selectedPoint = e.target.getLatLng();
-      getVertex(selectedPoint);
-      getRoute();
-    })
-    .addTo(map);
-
-  const targetMarker = L.marker([30.5904, 31.50673], { draggable: true })
-    .on("dragend", (e) => {
-      selectedPoint = e.target.getLatLng();
-      getVertex(selectedPoint);
-      getRoute();
-    })
-    .addTo(map);
-
   // Function to create popup content
   function createPopupContent(properties, pathPhoto) {
     let popupContent = "<table>";
@@ -135,71 +120,92 @@
     return popupContent;
   }
 
-  // function to get the shortest path from the give source and target nodes
-  function getRoute() {
-    let url = `${geoserverUrl}/wfs?service=WFS&version=1.0.0&request=GetFeature&typeName=emergencyManagment:shortest_path&outputformat=application/json&viewparams=source:${source};target:${target};`;
+  if (window.location.hostname === "localhost") {
+    const sourceMarker = L.marker([30.5904, 31.50673], { draggable: true })
+      .on("dragend", (e) => {
+        selectedPoint = e.target.getLatLng();
+        getVertex(selectedPoint);
+        getRoute();
+      })
+      .addTo(map);
 
-    $.getJSON(url, function (data) {
-      map.removeLayer(pathLayer);
-      pathLayer = L.geoJSON(data, {
-        onEachFeature: function (feature, layer) {
-          layer.bindPopup(createPopupContent(feature.properties)); // Bind popup with attribute data
+    const targetMarker = L.marker([30.5904, 31.50673], { draggable: true })
+      .on("dragend", (e) => {
+        selectedPoint = e.target.getLatLng();
+        getVertex(selectedPoint);
+        getRoute();
+      })
+      .addTo(map);
+    // function to get the shortest path from the give source and target nodes
+    function getRoute() {
+      let url = `${geoserverUrl}/wfs?service=WFS&version=1.0.0&request=GetFeature&typeName=emergencyManagment:shortest_path&outputformat=application/json&viewparams=source:${source};target:${target};`;
+
+      $.getJSON(url, function (data) {
+        map.removeLayer(pathLayer);
+        pathLayer = L.geoJSON(data, {
+          onEachFeature: function (feature, layer) {
+            layer.bindPopup(createPopupContent(feature.properties)); // Bind popup with attribute data
+          },
+        });
+        map.addLayer(pathLayer);
+      });
+    }
+
+    const getVertex = (selectedPoint) => {
+      const { lat, lng } = selectedPoint;
+      const wmsUrl = `${geoserverUrl}/emergencyManagment/wfs?service=WFS&version=1.0.0&request=GetFeature&typeName=emergencyManagment:nearest_vertex&outputformat=application/json&viewparams=x:${lng};y:${lat};`;
+
+      $.ajax({
+        url: wmsUrl,
+        async: false,
+        success: (data) => {
+          loadVertex(
+            data,
+            selectedPoint.toString() === sourceMarker.getLatLng().toString()
+          );
         },
       });
-      map.addLayer(pathLayer);
+    };
+
+    // function to update the source and target nodes as returned from geoserver for later querying
+    const loadVertex = (response, isSource) => {
+      if (response.features) {
+        let features = response.features;
+        map.removeLayer(pathLayer);
+        if (isSource) {
+          source = features[0].properties.id;
+          sourceMarker.bindPopup(
+            createPopupContent([
+              `latitude: ${features[0].geometry.coordinates[0]}`,
+              `longitude: ${features[0].geometry.coordinates[1]}`,
+            ])
+          ); // Bind popup with attribute data
+        } else {
+          target = features[0].properties.id;
+          targetMarker.bindPopup(
+            createPopupContent([
+              `latitude: ${features[0].geometry.coordinates[0]}`,
+              `longitude: ${features[0].geometry.coordinates[1]}`,
+            ])
+          ); // Bind popup with attribute data
+        }
+      } else {
+        console.error("Response does not contain features array.");
+      }
+    };
+
+    // Function to handle click events on pathLayer
+    pathLayer.on("click", function (event) {
+      event.layer.openPopup();
     });
+
+    getVertex(sourceMarker.getLatLng());
+  getVertex(targetMarker.getLatLng());
+  getRoute();
   }
 
-  const getVertex = (selectedPoint) => {
-    const { lat, lng } = selectedPoint;
-    const wmsUrl = `${geoserverUrl}/emergencyManagment/wfs?service=WFS&version=1.0.0&request=GetFeature&typeName=emergencyManagment:nearest_vertex&outputformat=application/json&viewparams=x:${lng};y:${lat};`;
-
-    $.ajax({
-      url: wmsUrl,
-      async: false,
-      success: (data) => {
-        loadVertex(
-          data,
-          selectedPoint.toString() === sourceMarker.getLatLng().toString()
-        );
-      },
-    });
-  };
-
-  // function to update the source and target nodes as returned from geoserver for later querying
-  const loadVertex = (response, isSource) => {
-    if (response.features) {
-      let features = response.features;
-      map.removeLayer(pathLayer);
-      if (isSource) {
-        source = features[0].properties.id;
-        sourceMarker.bindPopup(
-          createPopupContent([
-            `latitude: ${features[0].geometry.coordinates[0]}`,
-            `longitude: ${features[0].geometry.coordinates[1]}`,
-          ])
-        ); // Bind popup with attribute data
-      } else {
-        target = features[0].properties.id;
-        targetMarker.bindPopup(
-          createPopupContent([
-            `latitude: ${features[0].geometry.coordinates[0]}`,
-            `longitude: ${features[0].geometry.coordinates[1]}`,
-          ])
-        ); // Bind popup with attribute data
-      }
-    } else {
-      console.error("Response does not contain features array.");
-    }
-  };
-
-  // Function to handle click events on pathLayer
-  pathLayer.on("click", function (event) {
-    event.layer.openPopup();
-  });
-
   // Create a custom control element to get my location
-  var customControl = L.Control.extend({
+  const customControl = L.Control.extend({
     options: {
       position: "topleft",
     },
@@ -244,8 +250,11 @@
   // Add the custom control to the map
   map.addControl(new customControl());
 
-  getVertex(sourceMarker.getLatLng());
-  getVertex(targetMarker.getLatLng());
-  getRoute();
+  L.Routing.control({
+    waypoints: [
+      L.latLng(30.5904, 31.50673),
+      L.latLng(30.586827500000027, 31.47648410000005),
+    ],
+  }).addTo(map);
 </script>
 <%- include('../partials/footer') -%>
