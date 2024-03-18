@@ -205,6 +205,7 @@
   }
 
   // Create a custom control element to get my location
+  let userLocation = [30.596014170150362, 31.476310528555381];
   const customControl = L.Control.extend({
     options: {
       position: "topleft",
@@ -227,12 +228,27 @@
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(
             function (position) {
-              const userLocation = [
+              userLocation = [
                 position.coords.latitude,
                 position.coords.longitude,
               ];
               map.flyTo(userLocation, 18); // Smoothly pan and zoom to the user's location
               L.marker(userLocation).addTo(map); // Add marker at user's location
+
+              // Clear previous route, if any
+              console.log(window.routingControl);
+              if (window.routingControl) {
+                console.log("hi from clear");
+                window.routingControl.removeFrom(map);
+              }
+
+              // Update the routing control with new waypoints
+              window.routingControl = L.Routing.control({
+                waypoints: [
+                  L.latLng(30.5904, 31.50673),
+                  L.latLng(userLocation[0], userLocation[1]),
+                ],
+              }).addTo(map);
             },
             (error) => {
               console.error("Error getting user location:", error);
@@ -250,11 +266,41 @@
   // Add the custom control to the map
   map.addControl(new customControl());
 
-  L.Routing.control({
+  // Define routing control
+  var control = L.Routing.control({
     waypoints: [
       L.latLng(30.5904, 31.50673),
-      L.latLng(30.596014170150362, 31.476310528555381),
+      L.latLng(userLocation[0], userLocation[1]),
     ],
   }).addTo(map);
+
+  function createButton(label, container) {
+    let btn = L.DomUtil.create("button", "", container);
+    btn.setAttribute("type", "button");
+    btn.innerHTML = label;
+    return btn;
+  }
+
+  let destBtn;
+
+  map.on("click", function (e) {
+    let container = L.DomUtil.create("div"),
+      startBtn = createButton("Start from this location", container);
+    destBtn = createButton("Go to this location", container);
+
+    L.popup().setContent(container).setLatLng(e.latlng).openOn(map);
+
+    L.DomEvent.on(startBtn, "click", function () {
+      // Set the first waypoint to the clicked location
+      control.spliceWaypoints(0, 1, e.latlng);
+      map.closePopup();
+    });
+
+    L.DomEvent.on(destBtn, "click", function () {
+      // Set the destination waypoint to the clicked location
+      control.spliceWaypoints(control.getWaypoints().length - 1, 1, e.latlng);
+      map.closePopup();
+    });
+  });
 </script>
 <%- include('../partials/footer') -%>
