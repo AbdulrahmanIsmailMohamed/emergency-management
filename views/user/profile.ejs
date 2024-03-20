@@ -4,10 +4,15 @@
     <div class="col-md-2 rounded">
       <img
         src="<%=user.avatar%>"
-        height="130px"
-        width="130px"
+        height="150px"
+        width="150px"
         onclick="image(this)"
-        style="cursor: pointer"
+        style="
+          cursor: pointer;
+          border: 2px solid #fff;
+          box-shadow: 0 0 0 3px #007bff;
+          border-radius: 50%;
+        "
       />
     </div>
     <div class="col-md-9">
@@ -27,13 +32,15 @@
           onchange="readURL(this); toggleUploadButton();"
           style="cursor: pointer"
         />
-        <button type="submit" id="uploadButton" class="btn btn-primary">
+        <button type="submit" id="uploadButton" class="btn btn-primary my-2">
           Upload
         </button>
       </form>
 
       <hr />
-      <h1 class="display-4">Image Preivew</h1>
+      <h1 class="display-4" style="display: none" id="preivew">
+        Image Preivew
+      </h1>
       <img
         src="#"
         alt=""
@@ -56,12 +63,14 @@
 
 <script>
   let uploadButton = document.getElementById("uploadButton");
+  let preivew = document.getElementById("preivew");
   uploadButton.style.display = "none";
   function toggleUploadButton() {
     var fileInput = document.getElementById("avatar");
     var uploadButton = document.getElementById("uploadButton");
     if (fileInput.files.length > 0) {
       uploadButton.style.display = "block";
+      preivew.style.display = "block";
     }
   }
 </script>
