@@ -31,10 +31,10 @@ router
   .get(ensureAuthenticated, emergencyCallView)
   .post(ensureAuthenticated, emergencyCall);
 
-router.get("/basemap", basemap);
+router.get("/basemap", ensureAuthenticated, basemap);
 
 router.get("/logout", logout);
 
-router.post("/upload-avatar/:id", upload.single("avatar"), uploadAvatar);
+router.post("/upload-avatar", upload.single("avatar"), uploadAvatar);
 
 export default router;

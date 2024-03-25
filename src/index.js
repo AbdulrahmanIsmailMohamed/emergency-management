@@ -6,9 +6,9 @@ import flash from "connect-flash";
 import MongoDBStore from "connect-mongodb-session";
 import { config } from "dotenv";
 
-import { db } from "../db/connect.js";
-import errorHandling from "../middlewares/errorHandlingMW.js";
-import userRoutes from "../routes/user.routes.js";
+import { db } from "./db/connect.js";
+import errorHandling from "./middlewares/errorHandlingMW.js";
+import userRoutes from "./routes/user.routes.js";
 
 const app = express();
 
@@ -16,7 +16,7 @@ config(); // Load environment variables
 db(); // Connect to the database
 
 // Passport configuration
-import { passportInit } from "../config/passport.js";
+import { passportInit } from "./config/passport.js";
 passportInit();
 
 // Middleware

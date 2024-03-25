@@ -30,6 +30,14 @@ const userSchema = Schema(
     longLat: {
       type: [String],
     },
+    aboutMe: {
+      type: String,
+    },
+    favourites: [
+      {
+        features: [{}],
+      },
+    ],
   },
   { timestamp: true }
 );

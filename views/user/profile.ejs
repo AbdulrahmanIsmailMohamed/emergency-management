@@ -1,77 +1,173 @@
 <%- include('../partials/header') -%> <%- include('../partials/navbar') -%>
-<div class="container">
-  <div class="row mt-4">
-    <div class="col-md-2 rounded">
-      <img
-        src="<%=user.avatar%>"
-        height="150px"
-        width="150px"
-        onclick="image(this)"
-        style="
-          cursor: pointer;
-          border: 2px solid #fff;
-          box-shadow: 0 0 0 3px #007bff;
-          border-radius: 50%;
-        "
-      />
-    </div>
-    <div class="col-md-9">
-      <h1 class="display-4">Profile</h1>
-      <hr />
-      <%- include('../partials/flashMessages') %>
-      <h3><% if (user) { %> Welcome <%= user.name %>... <% } %></h3>
-      <form
-        action="/user/upload-avatar/<%=user._id%>"
-        method="POST"
-        enctype="multipart/form-data"
-      >
-        <input
-          type="file"
-          name="avatar"
-          id="avatar"
-          onchange="readURL(this); toggleUploadButton();"
-          style="cursor: pointer"
-        />
-        <button type="submit" id="uploadButton" class="btn btn-primary my-2">
-          Upload
-        </button>
-      </form>
 
-      <hr />
-      <h1 class="display-4" style="display: none" id="preivew">
-        Image Preivew
-      </h1>
-      <img
-        src="#"
-        alt=""
-        id="imagePlaceholder"
-        height="300px"
-        width="320px"
-        style="display: none"
-      />
-      <img
-        src="#"
-        alt=""
-        id="image"
-        height="300px"
-        width="320px"
-        style="display: none"
-      />
-    </div>
+<div class="container emp-profile">
+  <!-- Loading icon -->
+  <div id="loadingIcon" style="display: none">
+    <img src="/load.gif" alt="Loading Icon" />
   </div>
+
+  <form
+    id="profileForm"
+    action="/user/upload-avatar"
+    method="post"
+    enctype="multipart/form-data"
+  >
+    <div class="row">
+      <div class="col-md-4">
+        <div class="profile-img">
+          <img src="<%= user.avatar %>" alt="profile picture" />
+          <div class="file btn btn-lg btn-primary">
+            Change Photo
+            <input
+              type="file"
+              class="custom-file-input"
+              id="avatar"
+              name="avatar"
+              onchange="submitForm()"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="profile-head">
+          <h5>Welcome <%= user.name %></h5>
+          <br />
+          <br />
+          <br />
+          <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+              <a
+                class="nav-link active"
+                id="home-tab"
+                data-toggle="tab"
+                href="#home"
+                role="tab"
+                aria-controls="home"
+                aria-selected="true"
+                >About</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <input
+          type="submit"
+          class="profile-edit-btn"
+          name="btnAddMore"
+          value="Edit Profile"
+        />
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <h3>WishList</h3>
+        <div class="col-md-3 fixed-height-sidebar bg-light">
+          <p>This is a fixed height sidebar with scroll.</p>
+          <p>This is a fixed height sidebar with scroll.</p>
+          <p>This is a fixed height sidebar with scroll.</p>
+          <p>This is a fixed height sidebar with scroll.</p>
+          <p>This is a fixed height sidebar with scroll.</p>
+          <p>This is a fixed height sidebar with scroll.</p>
+          <p>This is a fixed height sidebar with scroll.</p>
+          <p>This is a fixed height sidebar with scroll.</p>
+          <p>This is a fixed height sidebar with scroll.</p>
+          <p>This is a fixed height sidebar with scroll.</p>
+          <p>This is a fixed height sidebar with scroll.</p>
+          <p>This is a fixed height sidebar with scroll.</p>
+          <p>This is a fixed height sidebar with scroll.</p>
+          <p>This is a fixed height sidebar with scroll.</p>
+          <p>This is a fixed height sidebar with scroll.</p>
+          <p>This is a fixed height sidebar with scroll.</p>
+          <p>This is a fixed height sidebar with scroll.</p>
+          <p>This is a fixed height sidebar with scroll.</p>
+          <p>This is a fixed height sidebar with scroll.</p>
+          <p>This is a fixed height sidebar with scroll.</p>
+          <p>This is a fixed height sidebar with scroll.</p>
+          <p>This is a fixed height sidebar with scroll.</p>
+          <p>This is a fixed height sidebar with scroll.</p>
+          <p>This is a fixed height sidebar with scroll.</p>
+          <p>This is a fixed height sidebar with scroll.</p>
+          <p>This is a fixed height sidebar with scroll.</p>
+          <p>This is a fixed height sidebar with scroll.</p>
+          <p>This is a fixed height sidebar with scroll.</p>
+          <p>This is a fixed height sidebar with scroll.</p>
+          <p>This is a fixed height sidebar with scroll.</p>
+          <p>This is a fixed height sidebar with scroll.</p>
+          <p>This is a fixed height sidebar with scroll.</p>
+          <p>This is a fixed height sidebar with scroll.</p>
+          <p>This is a fixed height sidebar with scroll.</p>
+          <p>This is a fixed height sidebar with scroll.</p>
+        </div>
+      </div>
+      <div class="col-md-8">
+        <div class="tab-content profile-tab" id="myTabContent">
+          <div
+            class="tab-pane fade show active"
+            id="home"
+            role="tabpanel"
+            aria-labelledby="home-tab"
+          >
+            <div class="row">
+              <div class="col-md-6">
+                <label>Name</label>
+              </div>
+              <div class="col-md-6">
+                <p><%= user.name %></p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <label>Email</label>
+              </div>
+              <div class="col-md-6">
+                <p><%= user.email %></p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <label>National-ID</label>
+              </div>
+              <div class="col-md-6">
+                <p><%= user.nationalID %></p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <label>longitude and latitude</label>
+              </div>
+              <div class="col-md-6">
+                <p><%= user.longLat %></p>
+              </div>
+            </div>
+          </div>
+        
+    </div>
+  </form>
 </div>
 
 <script>
-  let uploadButton = document.getElementById("uploadButton");
-  let preivew = document.getElementById("preivew");
-  uploadButton.style.display = "none";
-  function toggleUploadButton() {
-    var fileInput = document.getElementById("avatar");
-    var uploadButton = document.getElementById("uploadButton");
-    if (fileInput.files.length > 0) {
-      uploadButton.style.display = "block";
-      preivew.style.display = "block";
-    }
+  function submitForm() {
+    document.getElementById("loadingIcon").style.display = "block";
+    document.getElementById("profileForm").submit();
   }
+
+  // When the page finishes loading
+  window.addEventListener("load", function () {
+    // Hide loading icon
+    document.getElementById("loadingIcon").style.display = "none";
+  });
+
+  // When the form submission state changes
+  document
+    .getElementById("profileForm")
+    .addEventListener("readystatechange", function () {
+      // Check if the form is done loading
+      if (this.readyState === 4) {
+        // Hide loading icon
+        document.getElementById("loadingIcon").style.display = "none";
+      }
+    });
 </script>
+
 <%- include('../partials/footer') -%>

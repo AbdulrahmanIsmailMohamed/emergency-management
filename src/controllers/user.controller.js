@@ -46,7 +46,7 @@ export const uploadAvatar = asyncHandler(async (req, res) => {
       public_id: `${Date.now()}-profile`,
     });
     if (!result) return res.status(500).json("Internal Server Error!");
-    const update = await User.findByIdAndUpdate(req.params.id, {
+    const update = await User.findByIdAndUpdate(req.user._id, {
       avatar: result.url,
     });
     if (!update) return res.status(404).json("This user not exist");
