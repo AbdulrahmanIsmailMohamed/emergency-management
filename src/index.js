@@ -8,7 +8,7 @@ import { config } from "dotenv";
 
 import { db } from "./db/connect.js";
 import errorHandling from "./middlewares/errorHandlingMW.js";
-import userRoutes from "./routes/user.routes.js";
+import routes from "./routes/index.js";
 
 const app = express();
 
@@ -67,11 +67,11 @@ app.use(express.static("public"));
 app.use(express.static("node_modules"));
 
 app.get("/", (req, res) => {
-  res.redirect("/user/basemap");
+  res.redirect("/users/basemap");
 });
 
 // Routes
-app.use("/user", userRoutes); // User routes
+app.use(`/`, routes);
 
 // Error Handling
 app.use(errorHandling);

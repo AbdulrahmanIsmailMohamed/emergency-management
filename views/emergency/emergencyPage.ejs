@@ -1,0 +1,155 @@
+<%- include('../partials/header') -%> <%- include('../partials/navbar') -%>
+<div class="container emp-profile">
+  <!-- Loading icon -->
+  <div id="loadingIcon" style="display: none">
+    <img src="/load.gif" alt="Loading Icon" />
+  </div>
+
+  <div class="row">
+    <div class="col-md-4">
+      <div class="profile-img">
+        <img src="<%= emergency.properties.photo %>" alt="Emergency picture" />
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="profile-head">
+        <h5><b> Welcom to <%= emergency.properties.name %></b></h5>
+        <button
+          class="btn btn-primary"
+          onclick="handleEmergencyCall('<%=emergency.properties.type%>')"
+        >
+          Emergency Call
+        </button>
+        <br />
+        <br />
+        <br />
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+          <li class="nav-item">
+            <a
+              class="nav-link active"
+              id="home-tab"
+              data-toggle="tab"
+              href="#home"
+              role="tab"
+              aria-controls="home"
+              aria-selected="true"
+              >About</a
+            >
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-md-8 m-5">
+      <div class="tab-content profile-tab" id="myTabContent">
+        <div
+          class="tab-pane fade show active mx-5"
+          id="home"
+          role="tabpanel"
+          aria-labelledby="home-tab"
+        >
+          <div class="row">
+            <div class="col-md-6">
+              <label>Type</label>
+            </div>
+            <div class="col-md-6">
+              <p><%= emergency.properties.type %></p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <label>Name</label>
+            </div>
+            <div class="col-md-6">
+              <p><%= emergency.properties.name %></p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <label>Address</label>
+            </div>
+            <div class="col-md-6">
+              <p><%= emergency.properties.address %></p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <label>longitude and latitude</label>
+            </div>
+            <div class="col-md-6">
+              <p><%= emergency.geometry.coordinates %></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="userModal" class="modal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">User Data</h5>
+          <button
+            type="button"
+            class="btn btn-close"
+            data-dismiss="modal"
+            aria-label="Close"
+            onclick="closeModal()"
+          ></button>
+        </div>
+        <div class="modal-body" id="userData"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function handleEmergencyCall(emergency) {
+    document.getElementById("loadingIcon").style.display = "block";
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const long = position.coords.longitude;
+
+          // Send the coordinates to the server
+          fetch("/emergencies/emergency-call", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ lat, long }),
+          })
+            .then((response) => response.json())
+            .then((user) => {
+              // Update modal content with user data
+              document.getElementById("userData").innerHTML = `
+                  <p>لقد تم تحديد موقعك و ارسال بياناتك الي ${emergency} التي طلبتها وسوف يصلون اليك حالا</p>
+                  <p><img src="${user.avatar}" alt="User Image" class="avatar" style="max-width: 100px;"></p>
+                  <p><bold>Name</bold>: ${user.name}</p>
+                  <p>Email: ${user.email}</p>
+                  <p>National ID: ${user.nationalID}</p>
+                  <p>Long And Lat: [${user.longLat[0]}, ${user.longLat[1]}]</p>      
+                `;
+              // Show the modal
+              $("#userModal").modal("show");
+            })
+            .catch((error) => console.error("Error:", error));
+        },
+        (error) => {
+          console.error("Error getting user location:", error);
+        }
+      );
+    } else {
+      alert("Geolocation is not supported by your browser.");
+    }
+  }
+  // close model
+  function closeModal() {
+    $("#userModal").modal("hide");
+    document.getElementById("loadingIcon").style.display = "none";
+  }
+</script>
+
+<%- include('../partials/footer') -%>

@@ -73,7 +73,7 @@
       }),
     };
 
-    zag.features.forEach((item) => {
+    zag[0].features.forEach((item) => {
       const icon =
         iconMappings[item.properties.type.toLowerCase()] || iconMappings.fire;
 
@@ -87,6 +87,7 @@
               `Type: ${item.properties.type}`,
               `Name: ${item.properties.name}`,
               `Address: ${item.properties.address}`,
+              `<button class="btn btn-primary" id="redirectButton" onclick="redirectToURL(${item.id})">View Page</button>`,
             ],
             item.properties.photo.replace("\\", "/")
           )
@@ -95,7 +96,10 @@
     });
   };
 
-  fetchJSON("../data/zag.json");
+  fetchJSON("/emergencies");
+  function redirectToURL(id) {
+    window.location.href = `/emergencies/${id}`;
+  }
 
   // Function to create popup content
   function createPopupContent(properties, pathPhoto) {

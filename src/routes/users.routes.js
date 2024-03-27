@@ -9,12 +9,10 @@ import {
 import {
   loginView,
   profile,
-  emergencyCall,
   logout,
   uploadAvatar,
   basemap,
   registerView,
-  emergencyCallView,
 } from "../controllers/user.controller.js";
 import { login, register } from "../controllers/auth.controller.js";
 
@@ -26,15 +24,15 @@ router.route("/register").get(registerView).post(registerValidator, register);
 
 router.get("/profile", ensureAuthenticated, profile);
 
-router
-  .route("/emergency-call")
-  .get(ensureAuthenticated, emergencyCallView)
-  .post(ensureAuthenticated, emergencyCall);
-
 router.get("/basemap", ensureAuthenticated, basemap);
 
 router.get("/logout", logout);
 
-router.post("/upload-avatar", upload.single("avatar"), uploadAvatar);
+router.post(
+  "/upload-avatar",
+  upload.single("avatar"),
+  ensureAuthenticated,
+  uploadAvatar
+);
 
 export default router;

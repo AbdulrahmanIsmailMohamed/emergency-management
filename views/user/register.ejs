@@ -5,7 +5,7 @@
       <h1 class="display-4">Register</h1>
       <hr />
       <%- include('../partials/flashMessages') %>
-      <form action="/user/register" method="post">
+      <form action="/auth/register" method="post">
         <div class="form-group">
           <label for="name">Full Name (الاسم كما هو في البطاقة)</label>
           <input type="text" name="name" id="name" class="form-control" />
@@ -42,7 +42,7 @@
         </div>
       </form>
       <hr />
-      <p class="lead mt-4">Have An Account? <a href="/user/login">Login</a></p>
+      <p class="lead mt-4">Have An Account? <a href="/auth/login">Login</a></p>
     </div>
   </div>
 </div>

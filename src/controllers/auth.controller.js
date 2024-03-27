@@ -8,8 +8,8 @@ import User from "../models/User.js";
 export const login = async (req, res, next) => {
   try {
     await passport.authenticate("local", {
-      successRedirect: "/user/profile",
-      failureRedirect: "/user/login",
+      successRedirect: "/users/profile",
+      failureRedirect: "/auth/login",
       failureFlash: true,
     })(req, res, next);
   } catch (error) {
