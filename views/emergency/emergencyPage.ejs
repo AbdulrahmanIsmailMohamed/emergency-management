@@ -6,6 +6,16 @@
   </div>
 
   <div class="row">
+    <div
+      class="alert alert-success"
+      id="successMessage"
+      style="display: none"
+    ></div>
+    <div
+      class="alert alert-danger"
+      id="errorMessage"
+      style="display: none"
+    ></div>
     <div class="col-md-4">
       <div class="profile-img">
         <img src="<%= emergency.properties.photo %>" alt="Emergency picture" />
@@ -15,11 +25,19 @@
       <div class="profile-head">
         <h5><b> Welcom to <%= emergency.properties.name %></b></h5>
         <button
-          class="btn btn-primary"
-          onclick="handleEmergencyCall('<%=emergency.properties.type%>')"
+          class="btn btn-outline-primary"
+          onclick="handleEmergencyCall('<%= emergency.properties.type %>')"
         >
           Emergency Call
         </button>
+
+        <button
+          class="btn btn-outline-primary"
+          onclick="handleFavourite('<%= emergency.id %>', '<%= emergency.properties.name%>')"
+        >
+          Add to favourite
+        </button>
+
         <br />
         <br />
         <br />
@@ -105,6 +123,34 @@
 </div>
 
 <script>
+  function handleFavourite(id, name) {
+    console.log(id);
+    fetch("/users/favourites", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id, name }),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          document.getElementById("errorMessage").style.display = "block";
+          document.getElementById("errorMessage").innerText =
+            "This emergency has been added before";
+          return;
+        }
+        return res.json();
+      })
+      .then((data) => {
+        if (data === undefined) return;
+        document.getElementById("successMessage").style.display = "block";
+        document.getElementById("successMessage").innerText = data.message;
+      })
+      .catch((error) => {
+        throw new Error("error", error);
+      });
+  }
+
   function handleEmergencyCall(emergency) {
     document.getElementById("loadingIcon").style.display = "block";
     if (navigator.geolocation) {

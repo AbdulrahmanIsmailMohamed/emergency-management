@@ -4,7 +4,7 @@ import {
   loginValidator,
   registerValidator,
 } from "../utils/validators/user.validator.js";
-import { loginView, registerView } from "../controllers/user.controller.js";
+import { loginView, registerView } from "../controllers/auth.controller.js";
 import { login, register } from "../controllers/auth.controller.js";
 
 const router = Router();

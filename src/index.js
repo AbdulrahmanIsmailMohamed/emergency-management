@@ -7,8 +7,9 @@ import MongoDBStore from "connect-mongodb-session";
 import { config } from "dotenv";
 
 import { db } from "./db/connect.js";
-import errorHandling from "./middlewares/errorHandlingMW.js";
+import { errorHandling } from "./middlewares/errorHandlingMW.js";
 import routes from "./routes/index.js";
+import { APIError } from "./utils/APIError.js";
 
 const app = express();
 
@@ -67,13 +68,17 @@ app.use(express.static("public"));
 app.use(express.static("node_modules"));
 
 app.get("/", (req, res) => {
-  res.redirect("/users/basemap");
+  res.redirect("/emergencies/basemap");
 });
 
 // Routes
 app.use(`/`, routes);
 
-// Error Handling
+app.all("*", (req, res, next) => {
+  next(new APIError(`Can't Find This Route ${req.originalUrl}!!`, 404));
+});
+
+// Glopal Error Handling Middleware In Express
 app.use(errorHandling);
 
 // Start server

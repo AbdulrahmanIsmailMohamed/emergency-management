@@ -5,7 +5,16 @@
   <div id="loadingIcon" style="display: none">
     <img src="/load.gif" alt="Loading Icon" />
   </div>
-
+  <div
+      class="alert alert-success"
+      id="successMessage"
+      style="display: none"
+    ></div>
+    <div
+      class="alert alert-danger"
+      id="errorMessage"
+      style="display: none"
+    ></div>
   <form
     id="profileForm"
     action="/users/upload-avatar"
@@ -28,6 +37,7 @@
           </div>
         </div>
       </div>
+    </form>
       <div class="col-md-6">
         <div class="profile-head">
           <h5>Welcome <%= user.name %></h5>
@@ -64,41 +74,20 @@
       <div class="col-md-4">
         <h3>WishList</h3>
         <div class="col-md-3 fixed-height-sidebar sidebar">
-          <p>This is a fixed height sidebar with scroll.</p>
-          <p>This is a fixed height sidebar with scroll.</p>
-          <p>This is a fixed height sidebar with scroll.</p>
-          <p>This is a fixed height sidebar with scroll.</p>
-          <p>This is a fixed height sidebar with scroll.</p>
-          <p>This is a fixed height sidebar with scroll.</p>
-          <p>This is a fixed height sidebar with scroll.</p>
-          <p>This is a fixed height sidebar with scroll.</p>
-          <p>This is a fixed height sidebar with scroll.</p>
-          <p>This is a fixed height sidebar with scroll.</p>
-          <p>This is a fixed height sidebar with scroll.</p>
-          <p>This is a fixed height sidebar with scroll.</p>
-          <p>This is a fixed height sidebar with scroll.</p>
-          <p>This is a fixed height sidebar with scroll.</p>
-          <p>This is a fixed height sidebar with scroll.</p>
-          <p>This is a fixed height sidebar with scroll.</p>
-          <p>This is a fixed height sidebar with scroll.</p>
-          <p>This is a fixed height sidebar with scroll.</p>
-          <p>This is a fixed height sidebar with scroll.</p>
-          <p>This is a fixed height sidebar with scroll.</p>
-          <p>This is a fixed height sidebar with scroll.</p>
-          <p>This is a fixed height sidebar with scroll.</p>
-          <p>This is a fixed height sidebar with scroll.</p>
-          <p>This is a fixed height sidebar with scroll.</p>
-          <p>This is a fixed height sidebar with scroll.</p>
-          <p>This is a fixed height sidebar with scroll.</p>
-          <p>This is a fixed height sidebar with scroll.</p>
-          <p>This is a fixed height sidebar with scroll.</p>
-          <p>This is a fixed height sidebar with scroll.</p>
-          <p>This is a fixed height sidebar with scroll.</p>
-          <p>This is a fixed height sidebar with scroll.</p>
-          <p>This is a fixed height sidebar with scroll.</p>
-          <p>This is a fixed height sidebar with scroll.</p>
-          <p>This is a fixed height sidebar with scroll.</p>
-          <p>This is a fixed height sidebar with scroll.</p>
+          <% user.favourites.forEach(element => { %>  
+            <div class="row">
+              <div class="col-md-6">
+                <a href="/emergencies/<%= element.id %>">
+                  <p><%= element.name %></p>
+                </a>
+              </div>
+              <div class="col-md-6">
+                <button class="btn btn-outline-danger" onclick="removeFromFavourite('<%= element._id%>')">remove</button>
+              </div>
+            </div>
+            
+          <% }) %>
+         
         </div>
       </div>
       <div class="col-md-8">
@@ -144,19 +133,22 @@
           </div>
         
     </div>
-  </form>
+  
 </div>
 
 <script>
   function submitForm() {
     document.getElementById("loadingIcon").style.display = "block";
     document.getElementById("profileForm").submit();
+     document.getElementById("successMessage").style.display = "block";
+    document.getElementById("successMessage").innerText = "Uploaded successfully";
   }
 
   // When the page finishes loading
   window.addEventListener("load", function () {
     // Hide loading icon
     document.getElementById("loadingIcon").style.display = "none";
+   
   });
 
   // When the form submission state changes
@@ -169,6 +161,28 @@
         document.getElementById("loadingIcon").style.display = "none";
       }
     });
+
+    function removeFromFavourite(id) {
+      fetch(`/users/favourites/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      }})
+      .then((res)=>{
+        if(!res.ok){
+          document.getElementById("errorMessage").style.display = "block";
+          document.getElementById("errorMessage").innerText =
+            "This emergency deleted from your favourites successfully";
+          return;
+        }
+        return res.json()
+      }).then((data)=>{
+        if (data === undefined) return;
+        document.getElementById("successMessage").style.display = "block";
+        document.getElementById("successMessage").innerText = data.message;
+        location.reload()
+      }).catch((err)=>{console.log(err)})
+    }
 </script>
 
 <%- include('../partials/footer') -%>

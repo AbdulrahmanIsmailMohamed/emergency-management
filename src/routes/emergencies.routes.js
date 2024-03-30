@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  basemap,
   emergencyCall,
   getEmergencies,
   getEmergency,
@@ -11,7 +12,8 @@ const router = Router();
 router
   .use(ensureAuthenticated)
   .get("/", getEmergencies)
-  .get("/:id", getEmergency)
-  .post("/emergency-call", emergencyCall);
+  .post("/emergency-call", emergencyCall)
+  .get("/basemap", basemap)
+  .get("/:id", getEmergency);
 
 export default router;

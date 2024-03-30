@@ -35,7 +35,8 @@ const userSchema = Schema(
     },
     favourites: [
       {
-        features: [{}],
+        name: String,
+        id: Number,
       },
     ],
   },
