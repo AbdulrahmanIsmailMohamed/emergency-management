@@ -25,3 +25,17 @@ export const loginValidator = [
 
   check("password").notEmpty().withMessage("Password required"),
 ];
+
+export const updateUserValidator = [
+  check("name")
+    .optional()
+    .isLength({ min: 5 })
+    .withMessage("Your name should be more than 5 char"),
+
+  check("email").optional().isEmail().withMessage("Email Isn't valid"),
+
+  check("nationalID")
+    .optional()
+    .isLength({ min: 14, max: 14 })
+    .withMessage("You're national ID not valid"),
+];

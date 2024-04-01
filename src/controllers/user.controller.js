@@ -2,10 +2,26 @@ import User from "../models/User.js";
 import asyncHandler from "../middlewares/asyncHandler.js";
 import cloudinary from "../config/cloudinary.js";
 import { APIError } from "./../utils/APIError.js";
+import { validationResult } from "express-validator";
 
 export const profile = (req, res) => {
   res.render("user/profile");
 };
+
+export const updateUserView = (req, res) => {
+  res.render("user/updateUserData");
+};
+
+export const updateUser = asyncHandler(async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(new APIError(errors.errors[0].msg, 400));
+  }
+
+  const user = await User.findByIdAndUpdate(req.user._id, req.body);
+  if (!user) return next(new APIError("Can't update your data", 400));
+  return next(new APIError("Your data updated successfully", 200));
+});
 
 export const uploadAvatar = asyncHandler(async (req, res, next) => {
   const imagePath = req.file.path;

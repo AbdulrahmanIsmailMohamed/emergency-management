@@ -1,5 +1,4 @@
-import express from "express";
-import { urlencoded, json } from "express";
+import express, { urlencoded, json } from "express";
 import session from "express-session";
 import passport from "passport";
 import flash from "connect-flash";
@@ -9,7 +8,6 @@ import { config } from "dotenv";
 import { db } from "./db/connect.js";
 import { errorHandling } from "./middlewares/errorHandlingMW.js";
 import routes from "./routes/index.js";
-import { APIError } from "./utils/APIError.js";
 
 const app = express();
 
@@ -38,8 +36,7 @@ app.use(
     saveUninitialized: false,
     store,
     cookie: {
-      maxAge: 60000 * 15, // Maximum age of the session cookie (in milliseconds)
-      // secure: true, // Ensures that the cookie is only sent over HTTPS
+      maxAge: 30 * 24 * 60 * 60 * 1000, // Maximum age of the session cookie 
     },
   })
 );
@@ -75,7 +72,7 @@ app.get("/", (req, res) => {
 app.use(`/`, routes);
 
 app.all("*", (req, res, next) => {
-  next(new APIError(`Can't Find This Route ${req.originalUrl}!!`, 404));
+  return res.render("error/notFound")
 });
 
 // Glopal Error Handling Middleware In Express

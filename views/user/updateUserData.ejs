@@ -1,0 +1,87 @@
+<%- include('../partials/header') -%> <%- include('../partials/navbar') -%>
+<div class="container emp-profile">
+  <div
+    class="alert alert-success"
+    id="successMessage"
+    style="display: none"
+  ></div>
+  <div class="alert alert-danger" id="errorMessage" style="display: none"></div>
+  <form id="editForm">
+    <!-- here patch not post handle it-->
+    <div class="form-group">
+      <label for="name">Full Name (الاسم كما هو في البطاقة)</label>
+      <input
+        type="text"
+        name="name"
+        id="name"
+        class="form-control"
+        value="<%= user.name%>"
+      />
+    </div>
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input
+        type="text"
+        name="email"
+        id="email"
+        class="form-control"
+        value="<%= user.email%>"
+      />
+    </div>
+    <div class="form-group">
+      <label for="nationalID">National ID (الرقم القومي)</label>
+      <input
+        type="text"
+        name="nationalID"
+        id="nationalID"
+        class="form-control"
+        value="<%= user.nationalID%>"
+      />
+    </div>
+    <br />
+    <div class="form-group">
+      <button type="submit" class="btn btn-primary">Update data</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  // Submit form data to the server
+  document.getElementById("editForm").addEventListener("submit", (event) => {
+    event.preventDefault();
+    const formData = new FormData(document.getElementById("editForm"));
+    const userData = {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      nationalID: formData.get("nationalID"),
+    };
+    fetch("/users", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userData),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          document.getElementById("errorMessage").style.display = "block";
+          document.getElementById("errorMessage").innerText =
+            "Your data not valid, write a correct data";
+          return;
+        }
+        return res.json();
+      })
+      .then((data) => {
+        if (data === undefined) return;
+        document.getElementById("successMessage").style.display = "block";
+        document.getElementById("successMessage").innerText = data.message;
+        window.location.href = "/users/profile";
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("An error occurred, please try again later.");
+      });
+  });
+</script>
+
+<%- include('../partials/footer') -%>

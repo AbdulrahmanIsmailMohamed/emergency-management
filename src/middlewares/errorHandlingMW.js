@@ -1,5 +1,3 @@
-import { APIError } from "./../utils/APIError.js";
-
 const errorForDev = (err, res) =>
   res.status(err.statusCode).json({
     status: err.statusCode,

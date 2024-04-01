@@ -67,7 +67,7 @@
           name="btnAddMore"
           value="Edit Profile"
         /> -->
-        <p class="profile-edit-btn">Edit Profile</p>
+        <a href="/users"><p class="profile-edit-btn">Edit Profile</p></a>
       </div>
     </div>
     <div class="row">
@@ -181,7 +181,7 @@
         document.getElementById("successMessage").style.display = "block";
         document.getElementById("successMessage").innerText = data.message;
         location.reload()
-      }).catch((err)=>{console.log(err)})
+      }).catch((err)=>{console.error(err)})
     }
 </script>
 
