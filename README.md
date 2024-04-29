@@ -37,7 +37,7 @@ The project aims to facilitate and expedite emergency response operations and im
 
 ## file structure
 
-![GitHub Logo](/readme_img/file_structure.jpg)
+![GitHub Logo](/readme_img/image.jpg)
 
 # Environment Variables
 
