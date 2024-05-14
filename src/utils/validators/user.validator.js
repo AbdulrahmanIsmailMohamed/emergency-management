@@ -10,10 +10,12 @@ export const registerValidator = [
 
   check("password")
     .notEmpty()
-    .isStrongPassword()
-    .withMessage(
-      "Your password must be have at least 8 characters long 1 uppercase & 1 lowercase & 1 special char(@$%#&) character 1 number"
-    ),
+    .isLength({ min: 4})
+    .withMessage("You're password must be more than 4 num"),
+    // .isStrongPassword()
+    // .withMessage(
+    //   "Your password must be have at least 8 characters long 1 uppercase & 1 lowercase & 1 special char(@$%#&) character 1 number"
+    // ),
   check("nationalID")
     .notEmpty()
     .isLength({ min: 14, max: 14 })
